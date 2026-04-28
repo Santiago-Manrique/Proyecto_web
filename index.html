@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logbook de Vehículos | Registro Técnico</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Gestión de Movimientos de Vehículos</h1>
+        <nav>
+            <ul>
+                <li><a href="#vehiculos">Vehículos</a></li>
+                <li><a href="#consumo">Consumo</a></li>
+                <li><a href="#mantenimiento">Mantenimiento</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="vehiculos">
+            <h2>Nuevo Vehículo</h2>
+            <form id="form-vehiculo">
+                <input type="text" id="modelo" placeholder="Modelo (ej: Bajaj Rouser NS 125)" required>
+                <input type="text" id="patente" placeholder="Patente / Dominio" required>
+                <input type="text" id="conductor" placeholder="Conductor asignado" required>
+                <button type="submit">Registrar Vehículo</button>
+            </form>
+        </section>
+
+        <section id="consumo">
+            <h2>Cargar Combustible</h2>
+            <form id="form-consumo">
+                <select id="select-vehiculo-consumo" required>
+                    <option value="">Seleccionar Vehículo</option>
+                    </select>
+                <input type="number" id="km-actual" placeholder="Kilometraje actual" required>
+                <input type="number" step="0.01" id="litros" placeholder="Litros cargados" required>
+                <button type="submit">Guardar Carga</button>
+            </form>
+        </section>
+
+        <section id="mantenimiento">
+            <h2>Reportar Falla / Arreglo</h2>
+            <form id="form-mantenimiento">
+                <select id="select-vehiculo-falla" required>
+                    <option value="">Seleccionar Vehículo</option>
+                </select>
+                <select id="tipo-evento">
+                    <option value="falla">Falla Técnica</option>
+                    <option value="arreglo">Arreglo / Service</option>
+                </select>
+                <textarea id="descripcion" placeholder="Descripción del detalle..." required></textarea>
+                <button type="submit">Registrar Evento</button>
+            </form>
+        </section>
+
+        <section id="visualizacion">
+            <h2>Historial General</h2>
+            <div id="contenedor-datos">
+                <p>No hay datos registrados aún.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Proyecto Individual - Desarrollo de Ingeniería de Software</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
