@@ -41,3 +41,43 @@ formVehiculo.addEventListener('submit', (e) => {
 
 // Inicializar la app cargando lo que haya en memoria
 actualizarSelectores();
+const formConsumo = document.getElementById('form-consumo');
+
+formConsumo.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const patente = document.getElementById('select-vehiculo-consumo').value;
+    const kmActual = parseFloat(document.getElementById('km-actual').value);
+    const litros = parseFloat(document.getElementById('litros').value);
+
+    // Buscar el último registro de este vehículo para calcular la diferencia
+    const registrosVehiculo = registros.filter(r => r.patente === patente && r.tipo === 'consumo');
+    let consumoCalculado = 0;
+    let kmRecorridos = 0;
+
+    if (registrosVehiculo.length > 0) {
+        const ultimoRegistro = registrosVehiculo[registrosVehiculo.length - 1];
+        kmRecorridos = kmActual - ultimoRegistro.km;
+        consumoCalculado = kmRecorridos / litros; // km por litro
+    }
+
+    const nuevoRegistroConsumo = {
+        patente,
+        tipo: 'consumo',
+        km: kmActual,
+        litros: litros,
+        eficiencia: consumoCalculado.toFixed(2), // Guardamos el cálculo
+        fecha: new Date().toLocaleDateString()
+    };
+
+    registros.push(nuevoRegistroConsumo);
+    localStorage.setItem('registros', JSON.stringify(registros));
+    
+    formConsumo.reset();
+    alert(kmRecorridos > 0 
+        ? `Carga guardada. Hiciste ${kmRecorridos}km con un consumo de ${consumoCalculado.toFixed(2)} km/l.` 
+        : "Carga guardada (Primer registro para este vehículo).");
+    
+    // Aquí podrías llamar a una función para refrescar la tabla de historial
+    mostrarHistorial(); 
+});
