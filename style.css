@@ -68,3 +68,42 @@ button {
 button:hover {
     background-color: #219150;
 }
+/* Estilo para la tabla de registros */
+.tabla-log {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    font-size: 0.9rem;
+}
+
+.tabla-log th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.tabla-log td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Badges de estado */
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.consumo { background-color: #e1f5fe; color: #0288d1; }
+.falla { background-color: #ffebee; color: #c62828; }
+.arreglo { background-color: #e8f5e9; color: #2e7d32; }
+
+/* Hacer que la sección de visualización ocupe más espacio */
+#visualizacion {
+    flex: 1 1 100%; /* Ocupa todo el ancho en el flexbox */
+    max-width: 1240px;
+}
