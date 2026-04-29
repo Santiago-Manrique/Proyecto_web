@@ -1,134 +1,113 @@
-// Estructuras de datos iniciales
+// Memoria del Navegador
 let vehiculos = JSON.parse(localStorage.getItem('vehiculos')) || [];
 let registros = JSON.parse(localStorage.getItem('registros')) || [];
 
-// 1. Referencias a los formularios
-const formVehiculo = document.getElementById('form-vehiculo');
-const selectConsumo = document.getElementById('select-vehiculo-consumo');
-const selectFalla = document.getElementById('select-vehiculo-falla');
+// --- NAVEGACIÓN ---
+const links = document.querySelectorAll('.tab-link');
+const contents = document.querySelectorAll('.tab-content');
 
-// 2. Función para actualizar los selectores dinámicamente
-function actualizarSelectores() {
-    // Limpiamos los selectores dejando solo la opción por defecto
-    const opcionesBase = '<option value="">Seleccionar Vehículo</option>';
-    selectConsumo.innerHTML = opcionesBase;
-    selectFalla.innerHTML = opcionesBase;
-
-    vehiculos.forEach(v => {
-        const html = `<option value="${v.patente}">${v.modelo} (${v.patente})</option>`;
-        selectConsumo.innerHTML += html;
-        selectFalla.innerHTML += html;
+links.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-target');
+        links.forEach(l => l.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        link.classList.add('active');
+        document.getElementById(target).classList.add('active');
+        if(target === 'visualizacion') mostrarHistorial();
+        if(target === 'dashboard') actualizarDashboard();
     });
-}
+});
 
-// 3. Registrar Nuevo Vehículo
-formVehiculo.addEventListener('submit', (e) => {
+// --- LÓGICA DE REGISTRO ---
+
+// 1. Registro de Vehículo
+document.getElementById('form-vehiculo').addEventListener('submit', (e) => {
     e.preventDefault();
-
-    const nuevoVehiculo = {
+    const v = {
         modelo: document.getElementById('modelo').value,
         patente: document.getElementById('patente').value,
         conductor: document.getElementById('conductor').value
     };
-
-    vehiculos.push(nuevoVehiculo);
+    vehiculos.push(v);
     localStorage.setItem('vehiculos', JSON.stringify(vehiculos));
-    
     actualizarSelectores();
-    formVehiculo.reset();
-    alert("Vehículo registrado con éxito");
+    e.target.reset();
+    actualizarDashboard();
+    alert("Vehículo guardado.");
 });
 
-// Inicializar la app cargando lo que haya en memoria
-actualizarSelectores();
-const formConsumo = document.getElementById('form-consumo');
-
-formConsumo.addEventListener('submit', (e) => {
+// 2. Registro de Consumo
+document.getElementById('form-consumo').addEventListener('submit', (e) => {
     e.preventDefault();
-
     const patente = document.getElementById('select-vehiculo-consumo').value;
-    const kmActual = parseFloat(document.getElementById('km-actual').value);
+    const km = parseFloat(document.getElementById('km-actual').value);
     const litros = parseFloat(document.getElementById('litros').value);
 
-    // Buscar el último registro de este vehículo para calcular la diferencia
-    const registrosVehiculo = registros.filter(r => r.patente === patente && r.tipo === 'consumo');
-    let consumoCalculado = 0;
-    let kmRecorridos = 0;
+    // Cálculo de eficiencia
+    const anterior = registros.filter(r => r.patente === patente && r.tipo === 'consumo').pop();
+    const eficiencia = anterior ? ((km - anterior.km) / litros).toFixed(2) : "0.00";
 
-    if (registrosVehiculo.length > 0) {
-        const ultimoRegistro = registrosVehiculo[registrosVehiculo.length - 1];
-        kmRecorridos = kmActual - ultimoRegistro.km;
-        consumoCalculado = kmRecorridos / litros; // km por litro
-    }
-
-    const nuevoRegistroConsumo = {
-        patente,
-        tipo: 'consumo',
-        km: kmActual,
-        litros: litros,
-        eficiencia: consumoCalculado.toFixed(2), // Guardamos el cálculo
-        fecha: new Date().toLocaleDateString()
-    };
-
-    registros.push(nuevoRegistroConsumo);
+    const reg = { patente, tipo: 'consumo', km, litros, eficiencia, fecha: new Date().toLocaleDateString() };
+    registros.push(reg);
     localStorage.setItem('registros', JSON.stringify(registros));
-    
-    formConsumo.reset();
-    alert(kmRecorridos > 0 
-        ? `Carga guardada. Hiciste ${kmRecorridos}km con un consumo de ${consumoCalculado.toFixed(2)} km/l.` 
-        : "Carga guardada (Primer registro para este vehículo).");
-    
-    // Aquí podrías llamar a una función para refrescar la tabla de historial
-    mostrarHistorial(); 
+    e.target.reset();
+    actualizarDashboard();
+    alert(`Carga registrada: ${eficiencia} km/l`);
 });
 
-// Función para mostrar los datos en pantalla
-function mostrarHistorial() {
-    const contenedor = document.getElementById('contenedor-datos');
-    
-    if (registros.length === 0) {
-        contenedor.innerHTML = '<p style="text-align:center; padding:20px;">No hay registros cargados aún.</p>';
-        return;
-    }
+// 3. Registro de Mantenimiento
+document.getElementById('form-mantenimiento').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const reg = {
+        patente: document.getElementById('select-vehiculo-falla').value,
+        tipo: document.getElementById('tipo-evento').value,
+        descripcion: document.getElementById('descripcion').value,
+        fecha: new Date().toLocaleDateString()
+    };
+    registros.push(reg);
+    localStorage.setItem('registros', JSON.stringify(registros));
+    e.target.reset();
+    actualizarDashboard();
+    alert("Evento registrado.");
+});
 
-    // Creamos una tabla profesional
-    let tablaHTML = `
-        <table class="tabla-log">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Vehículo</th>
-                    <th>Tipo</th>
-                    <th>Detalles</th>
-                    <th>Resultado</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+// --- FUNCIONES AUXILIARES ---
 
-    // Recorremos los registros de atrás para adelante (el más nuevo primero)
-    registros.reverse().forEach(reg => {
-        const esConsumo = reg.tipo === 'consumo';
-        tablaHTML += `
-            <tr>
-                <td>${reg.fecha}</td>
-                <td><strong>${reg.patente}</strong></td>
-                <td><span class="badge ${reg.tipo}">${reg.tipo.toUpperCase()}</span></td>
-                <td>${esConsumo ? `Carga: ${reg.litros}L` : reg.descripcion}</td>
-                <td>${esConsumo ? `<strong>${reg.eficiencia} km/l</strong>` : '-'}</td>
-            </tr>
-        `;
+function actualizarSelectores() {
+    const selects = [document.getElementById('select-vehiculo-consumo'), document.getElementById('select-vehiculo-falla')];
+    selects.forEach(s => {
+        s.innerHTML = '<option value="">Seleccionar...</option>';
+        vehiculos.forEach(v => {
+            s.innerHTML += `<option value="${v.patente}">${v.modelo} (${v.patente})</option>`;
+        });
     });
-
-    tablaHTML += `</tbody></table>`;
-    contenedor.innerHTML = tablaHTML;
-    
-    // Invertimos de nuevo para no romper la lógica de búsqueda posterior
-    registros.reverse();
 }
 
-// Llamar a la función al iniciar la página para ver datos previos
-mostrarHistorial();
+function mostrarHistorial() {
+    const cont = document.getElementById('contenedor-datos');
+    if (registros.length === 0) { cont.innerHTML = "<p>Sin registros.</p>"; return; }
 
-// IMPORTANTE: Agregá "mostrarHistorial();" dentro de los eventos 'submit' 
-// después de los alerts para que la tabla se actualice sola.
+    let html = `<table><thead><tr><th>Fecha</th><th>Vehículo</th><th>Tipo</th><th>Info</th><th>Resultado</th></tr></thead><tbody>`;
+    [...registros].reverse().forEach(r => {
+        html += `<tr>
+            <td>${r.fecha}</td>
+            <td><strong>${r.patente}</strong></td>
+            <td><span class="badge ${r.tipo}">${r.tipo}</span></td>
+            <td>${r.tipo === 'consumo' ? r.litros + ' L' : r.descripcion}</td>
+            <td>${r.tipo === 'consumo' ? r.eficiencia + ' km/l' : '-'}</td>
+        </tr>`;
+    });
+    cont.innerHTML = html + "</tbody></table>";
+}
+
+function actualizarDashboard() {
+    document.getElementById('kpi-vehiculos').innerText = vehiculos.length;
+    document.getElementById('kpi-registros').innerText = registros.length;
+    const ultConsumo = registros.filter(r => r.tipo === 'consumo').pop();
+    document.getElementById('kpi-eficiencia').innerText = ultConsumo ? ultConsumo.eficiencia + ' km/l' : '0.00 km/l';
+}
+
+// Inicialización
+actualizarSelectores();
+actualizarDashboard();
