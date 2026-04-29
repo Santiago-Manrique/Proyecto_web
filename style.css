@@ -1,109 +1,85 @@
-/* Reset básico para que todo se vea igual en cualquier navegador */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --success: #27ae60;
+    --danger: #e74c3c;
+    --bg: #f4f7f6;
+    --white: #ffffff;
+    --sidebar-w: 260px;
 }
 
-body {
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
-header {
-    background: #2c3e50;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-}
+body { background: var(--bg); display: flex; }
 
-/* El contenedor principal usando Flexbox */
-main {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea */
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-}
-
-section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    flex: 1 1 300px; /* Crece, se achica y tiene un base de 300px */
-    max-width: 400px;
-}
-
-h2 {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    display: inline-block;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-input, select, textarea, button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    background-color: #27ae60;
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--secondary);
     color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
+    position: fixed;
+    padding: 20px 0;
 }
 
-button:hover {
-    background-color: #219150;
-}
-/* Estilo para la tabla de registros */
-.tabla-log {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-    font-size: 0.9rem;
-}
+.logo { padding: 0 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.logo span { color: var(--primary); }
 
-.tabla-log th {
-    background-color: #2c3e50;
+nav { margin-top: 20px; }
+.tab-link {
+    display: block;
+    padding: 15px 25px;
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.tab-link:hover, .tab-link.active {
+    background: rgba(255,255,255,0.1);
     color: white;
-    padding: 12px;
-    text-align: left;
+    border-left: 4px solid var(--primary);
 }
 
-.tabla-log td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+/* Contenido Principal */
+.main-content {
+    margin-left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
+    padding: 40px;
 }
 
-/* Badges de estado */
-.badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-transform: uppercase;
+.content-header { margin-bottom: 30px; }
+
+/* Grid de KPIs */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+
+/* Tarjetas */
+.card { background: var(--white); padding: 25px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.kpi { border-top: 4px solid var(--primary); }
+.kpi .label { font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; }
+.kpi h3 { font-size: 1.8rem; margin-top: 5px; color: var(--secondary); }
+
+/* Formularios */
+.form-container { max-width: 600px; margin: 0 auto; }
+.input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.input-group label { margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
+
+.btn-primary { 
+    background: var(--primary); color: white; border: none; padding: 12px; 
+    border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;
 }
 
-.consumo { background-color: #e1f5fe; color: #0288d1; }
-.falla { background-color: #ffebee; color: #c62828; }
-.arreglo { background-color: #e8f5e9; color: #2e7d32; }
+/* Tablas */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s; }
 
-/* Hacer que la sección de visualización ocupe más espacio */
-#visualizacion {
-    flex: 1 1 100%; /* Ocupa todo el ancho en el flexbox */
-    max-width: 1240px;
-}
+.table-responsive { overflow-x: auto; margin-top: 20px; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #f8f9fa; text-align: left; padding: 15px; font-size: 0.8rem; color: #7f8c8d; }
+td { padding: 15px; border-top: 1px solid #eee; }
+
+.badge { padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
+.falla { background: #fdecea; color: var(--danger); }
+.consumo { background: #e3f2fd; color: var(--primary); }
+.arreglo { background: #e8f5e9; color: var(--success); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
