@@ -3,71 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logbook de Vehículos | Registro Técnico</title>
+    <title>VehicleLog PRO | Ingeniería</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <header>
-        <h1>Gestión de Movimientos de Vehículos</h1>
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>LOGBOOK <span>PRO</span></h2>
+        </div>
         <nav>
-            <ul>
-                <li><a href="#vehiculos">Vehículos</a></li>
-                <li><a href="#consumo">Consumo</a></li>
-                <li><a href="#mantenimiento">Mantenimiento</a></li>
-            </ul>
+            <a href="#" class="tab-link active" data-target="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="#" class="tab-link" data-target="vehiculos"><i class="fa-solid fa-motorcycle"></i> Mis Vehículos</a>
+            <a href="#" class="tab-link" data-target="consumo"><i class="fa-solid fa-gas-pump"></i> Carga de Nafta</a>
+            <a href="#" class="tab-link" data-target="mantenimiento"><i class="fa-solid fa-wrench"></i> Mantenimiento</a>
+            <a href="#" class="tab-link" data-target="visualizacion"><i class="fa-solid fa-list"></i> Historial</a>
         </nav>
-    </header>
+    </aside>
 
-    <main>
-        <section id="vehiculos">
-            <h2>Nuevo Vehículo</h2>
-            <form id="form-vehiculo">
-                <input type="text" id="modelo" placeholder="Modelo (ej: Bajaj Rouser NS 125)" required>
-                <input type="text" id="patente" placeholder="Patente / Dominio" required>
-                <input type="text" id="conductor" placeholder="Conductor asignado" required>
-                <button type="submit">Registrar Vehículo</button>
-            </form>
+    <main class="main-content">
+        <section id="dashboard" class="tab-content active">
+            <header class="content-header">
+                <h1>Panel de Resumen</h1>
+                <p>Información clave de tu flota individual.</p>
+            </header>
+            <div class="kpi-grid">
+                <div class="card kpi">
+                    <span class="label">Vehículos</span>
+                    <h3 id="kpi-vehiculos">0</h3>
+                </div>
+                <div class="card kpi">
+                    <span class="label">Último Consumo</span>
+                    <h3 id="kpi-eficiencia">0.00 km/l</h3>
+                </div>
+                <div class="card kpi">
+                    <span class="label">Registros Totales</span>
+                    <h3 id="kpi-registros">0</h3>
+                </div>
+            </div>
         </section>
 
-        <section id="consumo">
-            <h2>Cargar Combustible</h2>
-            <form id="form-consumo">
-                <select id="select-vehiculo-consumo" required>
-                    <option value="">Seleccionar Vehículo</option>
-                    </select>
-                <input type="number" id="km-actual" placeholder="Kilometraje actual" required>
-                <input type="number" step="0.01" id="litros" placeholder="Litros cargados" required>
-                <button type="submit">Guardar Carga</button>
-            </form>
+        <section id="vehiculos" class="tab-content">
+            <div class="card form-container">
+                <h2>Registrar Nuevo Vehículo</h2>
+                <form id="form-vehiculo">
+                    <div class="input-group">
+                        <label>Modelo</label>
+                        <input type="text" id="modelo" placeholder="Ej: Bajaj Rouser NS 125" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Patente</label>
+                        <input type="text" id="patente" placeholder="Dominio" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Conductor</label>
+                        <input type="text" id="conductor" placeholder="Nombre completo" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar</button>
+                </form>
+            </div>
         </section>
 
-        <section id="mantenimiento">
-            <h2>Reportar Falla / Arreglo</h2>
-            <form id="form-mantenimiento">
-                <select id="select-vehiculo-falla" required>
-                    <option value="">Seleccionar Vehículo</option>
-                </select>
-                <select id="tipo-evento">
-                    <option value="falla">Falla Técnica</option>
-                    <option value="arreglo">Arreglo / Service</option>
-                </select>
-                <textarea id="descripcion" placeholder="Descripción del detalle..." required></textarea>
-                <button type="submit">Registrar Evento</button>
-            </form>
+        <section id="consumo" class="tab-content">
+            <div class="card form-container">
+                <h2>Carga de Combustible</h2>
+                <form id="form-consumo">
+                    <div class="input-group">
+                        <label>Vehículo</label>
+                        <select id="select-vehiculo-consumo" required></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Kilometraje Actual</label>
+                        <input type="number" id="km-actual" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Litros Cargados</label>
+                        <input type="number" step="0.01" id="litros" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Guardar Carga</button>
+                </form>
+            </div>
         </section>
 
-        <section id="visualizacion">
-            <h2>Historial General</h2>
-            <div id="contenedor-datos">
-                <p>No hay datos registrados aún.</p>
+        <section id="mantenimiento" class="tab-content">
+            <div class="card form-container">
+                <h2>Reportar Falla o Arreglo</h2>
+                <form id="form-mantenimiento">
+                    <div class="input-group">
+                        <label>Vehículo</label>
+                        <select id="select-vehiculo-falla" required></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Tipo</label>
+                        <select id="tipo-evento">
+                            <option value="falla">Falla Técnica</option>
+                            <option value="arreglo">Arreglo / Service</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Descripción</label>
+                        <textarea id="descripcion" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Evento</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="visualizacion" class="tab-content">
+            <div class="card table-card">
+                <h2>Historial de Movimientos</h2>
+                <div id="contenedor-datos" class="table-responsive"></div>
             </div>
         </section>
     </main>
-
-    <footer>
-        <p>Proyecto Individual - Desarrollo de Ingeniería de Software</p>
-    </footer>
 
     <script src="js/main.js"></script>
 </body>
