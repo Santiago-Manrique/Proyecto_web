@@ -1,26 +1,16 @@
 /**
- * MAIN.JS - SISTEMA DE GESTIÓN DE FLOTA VEHICULAR PRO
- * Arquitectura: Persistencia vinculada por ID de vehículo y gestión de estados.
+ * MAIN.JS - SISTEMA DE MOVIMIENTOS LOGÍSTICOS
+ * Automatización de estados y tiempos de uso[cite: 1].
  */
 
-// 1. ESTADO GLOBAL Y PERSISTENCIA
 let flota = JSON.parse(localStorage.getItem('logbook_flota')) || [];
-let registrosConsumo = JSON.parse(localStorage.getItem('logbook_consumo')) || [];
+let registrosMovimientos = JSON.parse(localStorage.getItem('logbook_movimientos')) || [];
 let registrosMantenimiento = JSON.parse(localStorage.getItem('logbook_mantenimiento')) || [];
 let vehiculoSeleccionadoId = null;
 
-// 2. GESTIÓN DE VEHÍCULOS (FLOTA)
-function abrirModalVehiculo() {
-    document.getElementById('modal-vehiculo').style.display = 'flex';
-}
-
-function cerrarModal() {
-    document.getElementById('modal-vehiculo').style.display = 'none';
-    limpiarCamposVehiculo();
-}
-
+// GESTIÓN DE VEHÍCULOS[cite: 1]
 function guardarVehiculo() {
-    const vehiculo = {
+    const v = {
         id: Date.now(),
         marca: document.getElementById('v-marca').value,
         modelo: document.getElementById('v-modelo').value,
@@ -29,10 +19,8 @@ function guardarVehiculo() {
         dueno: document.getElementById('v-dueno').value,
         estado: document.getElementById('v-estado').value
     };
-
-    if (!vehiculo.patente || !vehiculo.modelo) return alert("Patente y Modelo son obligatorios.");
-
-    flota.push(vehiculo);
+    if(!v.patente || !v.modelo) return alert("Faltan datos obligatorios.");
+    flota.push(v);
     localStorage.setItem('logbook_flota', JSON.stringify(flota));
     cerrarModal();
     actualizarInterfaz();
@@ -40,158 +28,113 @@ function guardarVehiculo() {
 
 function seleccionarVehiculo(id) {
     vehiculoSeleccionadoId = id;
-    const vehiculo = flota.find(v => v.id === id);
-    
-    // Actualizar indicador de contexto en el Sidebar[cite: 1]
-    document.getElementById('current-vehicle-name').innerText = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.patente})`;
-    
+    const v = flota.find(x => x.id === id);
+    document.getElementById('current-vehicle-name').innerText = `${v.modelo} [${v.patente}]`;
     actualizarInterfaz();
 }
 
-// 3. MÓDULO DE CONSUMO (LÓGICA DE INGENIERÍA)[cite: 1]
-function registrarConsumo() {
-    if (!vehiculoSeleccionadoId) return alert("Primero selecciona un vehículo de la flota.");
+// CONTROL DE MOVIMIENTOS Y TIEMPOS[cite: 1]
+function registrarMovimiento() {
+    if (!vehiculoSeleccionadoId) return alert("Selecciona un vehículo de la flota.");
 
-    const kmActual = parseFloat(document.getElementById('km-actual').value);
-    const litros = parseFloat(document.getElementById('litros-carga').value);
-    const fecha = new Date().toLocaleDateString();
+    const tipo = document.getElementById('mov-tipo').value;
+    const ahora = new Date();
+    const vehiculo = flota.find(v => v.id === vehiculoSeleccionadoId);
 
-    if (isNaN(kmActual) || isNaN(litros) || kmActual <= 0) return alert("Ingresa valores válidos.");
-
-    // Filtrar consumos específicos del vehículo actual para el cálculo de eficiencia[cite: 1]
-    const consumosVehiculo = registrosConsumo.filter(r => r.vehiculoId === vehiculoSeleccionadoId);
-    
-    let eficiencia = 0;
-    if (consumosVehiculo.length > 0) {
-        const ultimoKM = consumosVehiculo[0].km;
-        if (kmActual > ultimoKM) {
-            eficiencia = ((kmActual - ultimoKM) / litros).toFixed(2);
-        } else {
-            return alert("El KM actual debe ser mayor al anterior.");
-        }
+    // Bloqueo de Acción: Evita dos salidas o dos entradas seguidas[cite: 1]
+    const ultimoMov = registrosMovimientos.find(m => m.vehiculoId === vehiculoSeleccionadoId);
+    if (ultimoMov && ultimoMov.tipo === tipo) {
+        return alert(`El sistema ya registra una ${tipo} para esta unidad.`);
     }
 
-    const nuevoRegistro = { 
-        id: Date.now(), 
-        vehiculoId: vehiculoSeleccionadoId, 
-        fecha, 
-        km: kmActual, 
-        litros, 
-        eficiencia 
+    // Cálculo de Duración de Uso[cite: 1]
+    let duracion = "-";
+    if (tipo === "Entrada" && ultimoMov && ultimoMov.tipo === "Salida") {
+        const diffMs = ahora - new Date(ultimoMov.timestamp);
+        const diffHrs = Math.floor(diffMs / 3600000);
+        const diffMins = Math.round(((diffMs % 3600000) / 60000));
+        duracion = `${diffHrs}h ${diffMins}min`;
+    }
+
+    const nuevoMov = {
+        vehiculoId: vehiculoSeleccionadoId,
+        fecha: ahora.toLocaleDateString(),
+        hora: ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        tipo,
+        duracion,
+        responsable: vehiculo.dueno,
+        timestamp: ahora.toISOString()
     };
 
-    registrosConsumo.unshift(nuevoRegistro);
-    localStorage.setItem('logbook_consumo', JSON.stringify(registrosConsumo));
-    actualizarInterfaz();
+    // Cambio Automático de Estado Visual[cite: 1]
+    vehiculo.estado = (tipo === "Salida") ? "inactivo" : "activo";
     
-    document.getElementById('km-actual').value = "";
-    document.getElementById('litros-carga').value = "";
+    registrosMovimientos.unshift(nuevoMov);
+    localStorage.setItem('logbook_movimientos', JSON.stringify(registrosMovimientos));
+    localStorage.setItem('logbook_flota', JSON.stringify(flota));
+    actualizarInterfaz();
 }
 
-// 4. MÓDULO DE MANTENIMIENTO[cite: 1]
+// MANTENIMIENTO[cite: 1]
 function registrarMantenimiento() {
-    if (!vehiculoSeleccionadoId) return alert("Selecciona un vehículo primero.");
-
+    if (!vehiculoSeleccionadoId) return alert("Selecciona un vehículo.");
     const desc = document.getElementById('mant-desc').value;
     const tipo = document.getElementById('mant-tipo').value;
-    const fecha = new Date().toLocaleDateString();
+    if (!desc.trim()) return;
 
-    if (!desc.trim()) return alert("La descripción es obligatoria.");
-
-    const nuevoMant = { 
-        id: Date.now(), 
-        vehiculoId: vehiculoSeleccionadoId, 
-        fecha, 
-        desc, 
-        tipo 
-    };
-
-    registrosMantenimiento.unshift(nuevoMant);
+    registrosMantenimiento.unshift({
+        vehiculoId: vehiculoSeleccionadoId,
+        fecha: new Date().toLocaleDateString(),
+        desc, tipo
+    });
     localStorage.setItem('logbook_mantenimiento', JSON.stringify(registrosMantenimiento));
     actualizarInterfaz();
-    
     document.getElementById('mant-desc').value = "";
 }
 
-// 5. RENDERIZADO Y ACTUALIZACIÓN GLOBAL[cite: 1]
+// RENDERIZADO[cite: 1]
 function actualizarInterfaz() {
     renderizarFlota();
     renderizarTablas();
-    actualizarKPIs();
 }
 
 function renderizarFlota() {
     const grid = document.getElementById('grid-vehiculos');
-    if (!grid) return;
-
     grid.innerHTML = flota.map(v => `
-        <div class="vehicle-card ${vehiculoSeleccionadoId === v.id ? 'selected' : ''}" 
-             onclick="seleccionarVehiculo(${v.id})">
+        <div class="vehicle-card ${vehiculoSeleccionadoId === v.id ? 'selected' : ''}" onclick="seleccionarVehiculo(${v.id})">
             <span class="patente-tag">${v.patente}</span>
             <h4>${v.modelo}</h4>
             <p><span class="status-dot status-${v.estado}"></span>${v.estado.toUpperCase()}</p>
-            <p><strong>${v.marca}</strong> | ${v.dueno}</p>
+            <p><small>Resp: ${v.dueno}</small></p>
         </div>
     `).join('');
 }
 
 function renderizarTablas() {
-    // Filtrar datos según el vehículo seleccionado para el Selector de Contexto[cite: 1]
-    const tablaConsumo = document.querySelector("#tabla-consumo tbody");
-    const filtradosConsumo = registrosConsumo.filter(r => r.vehiculoId === vehiculoSeleccionadoId);
-    
-    if (tablaConsumo) {
-        tablaConsumo.innerHTML = filtradosConsumo.map(r => `
-            <tr>
-                <td>${r.fecha}</td>
-                <td>${r.km}</td>
-                <td>${r.litros}</td>
-                <td><span class="badge">${r.eficiencia > 0 ? r.eficiencia + ' km/l' : 'Base'}</span></td>
-            </tr>
-        `).join('');
-    }
+    const movFiltrados = registrosMovimientos.filter(m => m.vehiculoId === vehiculoSeleccionadoId);
+    document.querySelector("#tabla-movimientos tbody").innerHTML = movFiltrados.map(m => `
+        <tr>
+            <td>${m.fecha}</td>
+            <td>${m.hora}</td>
+            <td><span class="badge" style="background:${m.tipo === 'Salida' ? 'rgba(255,51,51,0.2)' : 'rgba(0,255,136,0.2)'}">${m.tipo}</span></td>
+            <td>${m.duracion}</td>
+            <td>${m.responsable}</td>
+        </tr>
+    `).join('');
 
-    const tablaMant = document.querySelector("#tabla-mantenimiento tbody");
-    const filtradosMant = registrosMantenimiento.filter(m => m.vehiculoId === vehiculoSeleccionadoId);
-
-    if (tablaMant) {
-        tablaMant.innerHTML = filtradosMant.map(m => `
-            <tr>
-                <td>${m.fecha}</td>
-                <td>${m.desc}</td>
-                <td><span class="badge">${m.tipo}</span></td>
-            </tr>
-        `).join('');
-    }
+    const mantFiltrados = registrosMantenimiento.filter(m => m.vehiculoId === vehiculoSeleccionadoId);
+    document.querySelector("#tabla-mantenimiento tbody").innerHTML = mantFiltrados.map(m => `
+        <tr><td>${m.fecha}</td><td>${m.desc}</td><td><span class="badge">${m.tipo}</span></td></tr>
+    `).join('');
 }
 
-function actualizarKPIs() {
-    document.getElementById('kpi-vehiculos').innerText = flota.length;
-    
-    if (vehiculoSeleccionadoId) {
-        const filtrados = registrosConsumo.filter(r => r.vehiculoId === vehiculoSeleccionadoId && r.eficiencia > 0);
-        if (filtrados.length > 0) {
-            document.getElementById('kpi-eficiencia').innerText = `${filtrados[0].eficiencia} km/l`;
-        } else {
-            document.getElementById('kpi-eficiencia').innerText = "-- km/l";
-        }
-    }
-}
-
-function limpiarCamposVehiculo() {
-    ['v-marca', 'v-modelo', 'v-patente', 'v-chasis', 'v-dueno'].forEach(id => {
-        document.getElementById(id).value = "";
-    });
-}
-
-// 6. NAVEGACIÓN SPA[cite: 1]
-function showTab(tabId) {
+function showTab(id) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    if (event) event.currentTarget.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    if(event) event.currentTarget.classList.add('active');
 }
 
-// Inicialización
+function abrirModalVehiculo() { document.getElementById('modal-vehiculo').style.display = 'flex'; }
+function cerrarModal() { document.getElementById('modal-vehiculo').style.display = 'none'; }
 window.onload = actualizarInterfaz;
