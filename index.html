@@ -3,50 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logbook Vehicular | Ingeniería y Gestión</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Google Fonts para un perfil profesional -->
+    <title>Logbook Vehicular Pro | Gestión de Flota</title>
+    <!-- Google Fonts para perfil de ingeniería -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="background-blobs"></div>
     
     <div class="glass-shell">
+        <!-- BARRA LATERAL (Navegación Contextual) -->
         <aside class="sidebar">
-            <h2 class="logo">LOGBOOK<span>v1</span></h2>
+            <h2 class="logo">LOGBOOK<span>PRO</span></h2>
             <nav>
                 <button onclick="showTab('dashboard')" class="nav-btn active">Dashboard</button>
-                <button onclick="showTab('consumo')" class="nav-btn">Consumo</button>
+                <button onclick="showTab('vehiculos')" class="nav-btn">Mi Flota</button>
+                <button onclick="showTab('consumo')" class="nav-btn">Consumo / Eficiencia</button>
                 <button onclick="showTab('mantenimiento')" class="nav-btn">Mantenimiento</button>
             </nav>
+            <div class="context-indicator">
+                <small>Vehículo Actual:</small>
+                <p id="current-vehicle-name">Ninguno seleccionado</p>
+            </div>
         </aside>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <main class="content">
-            <!-- TAB: DASHBOARD -->
+            
+            <!-- SECCIÓN: DASHBOARD (KPIs Globales) -->
             <section id="dashboard" class="tab-content active">
                 <header>
                     <h1>Panel de Control</h1>
-                    <p>Indicadores clave de rendimiento (KPIs)</p>
+                    <p>Métricas de rendimiento de flota e ingeniería</p>
                 </header>
                 <div class="kpi-container">
                     <div class="kpi-card">
-                        <span>Vehículos</span>
+                        <span>Total Unidades</span>
                         <h3 id="kpi-vehiculos">0</h3>
                     </div>
                     <div class="kpi-card">
-                        <span>Última Eficiencia</span>
+                        <span>Eficiencia Promedio</span>
                         <h3 id="kpi-eficiencia">-- km/l</h3>
                     </div>
                     <div class="kpi-card">
-                        <span>Estado Técnico</span>
-                        <h3 id="kpi-estado">Óptimo</h3>
+                        <span>Alertas Técnicas</span>
+                        <h3 id="kpi-alertas">0</h3>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB: CONSUMO -->
+            <!-- SECCIÓN: GESTIÓN DE FLOTA (Tarjetas Compactas) -->
+            <section id="vehiculos" class="tab-content">
+                <div class="section-header">
+                    <h2>Gestión de Flota</h2>
+                    <button class="action-btn" onclick="abrirModalVehiculo()">+ Añadir Vehículo</button>
+                </div>
+                <div id="grid-vehiculos" class="vehicle-grid">
+                    <!-- Las tarjetas se generan dinámicamente con JS -->
+                </div>
+            </section>
+
+            <!-- SECCIÓN: CONSUMO (Lógica de Ingeniería) -->
             <section id="consumo" class="tab-content">
-                <h2>Registro de Eficiencia Energética</h2>
+                <h2>Eficiencia Energética</h2>
                 <div class="glass-form">
                     <input type="number" id="km-actual" placeholder="Kilometraje Actual">
                     <input type="number" id="litros-carga" placeholder="Litros Cargados">
@@ -66,8 +85,58 @@
                     </table>
                 </div>
             </section>
+
+            <!-- SECCIÓN: MANTENIMIENTO -->
+            <section id="mantenimiento" class="tab-content">
+                <h2>Historial Técnico</h2>
+                <div class="glass-form">
+                    <input type="text" id="mant-desc" placeholder="Descripción del servicio">
+                    <select id="mant-tipo" class="glass-input">
+                        <option value="Falla">Falla Técnica</option>
+                        <option value="Service">Service / Arreglo</option>
+                        <option value="Preventivo">Preventivo</option>
+                    </select>
+                    <button class="action-btn" onclick="registrarMantenimiento()">Cargar Evento</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="tabla-mantenimiento">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Evento</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
+
+    <!-- MODAL PARA NUEVO VEHÍCULO -->
+    <div id="modal-vehiculo" class="modal">
+        <div class="glass-card modal-content">
+            <h3>Registro de Nueva Unidad</h3>
+            <div class="grid-inputs">
+                <input type="text" id="v-marca" placeholder="Marca (ej. Honda)">
+                <input type="text" id="v-modelo" placeholder="Modelo (ej. Wave 110S)">
+                <input type="text" id="v-patente" placeholder="Patente">
+                <input type="text" id="v-chasis" placeholder="N° de Chasis">
+                <input type="text" id="v-dueno" placeholder="Dueño / Responsable">
+                <select id="v-estado">
+                    <option value="activo">Activo (Verde)</option>
+                    <option value="mantenimiento">Mantenimiento (Amarillo)</option>
+                    <option value="inactivo">Inactivo (Rojo)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="nav-btn" onclick="cerrarModal()">Cancelar</button>
+                <button class="action-btn" onclick="guardarVehiculo()">Guardar Vehículo</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
 </body>
 </html>
