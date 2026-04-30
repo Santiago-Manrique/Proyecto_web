@@ -140,3 +140,22 @@ td { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
     background: rgba(0, 242, 254, 0.2);
     color: var(--accent);
 }
+/* Estados del Vehículo */
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.status-activo { color: #00ff88; background-color: #00ff88; }       /* Verde */
+.status-mantenimiento { color: #ffbb00; background-color: #ffbb00; } /* Amarillo */
+.status-inactivo { color: #ff3333; background-color: #ff3333; }    /* Rojo */
+
+/* Tarjeta Seleccionada */
+.vehicle-card.selected {
+    border: 2px solid var(--accent);
+    background: rgba(0, 242, 254, 0.1);
+}
