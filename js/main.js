@@ -54,3 +54,43 @@ function showTab(tabId) {
 
 // Inicialización
 window.onload = actualizarInterfaz;
+
+// Cargar datos de mantenimiento desde localStorage
+let registrosMantenimiento = JSON.parse(localStorage.getItem('logbook_mantenimiento')) || [];
+
+function registrarMantenimiento() {
+    const desc = document.getElementById('mant-desc').value;
+    const tipo = document.getElementById('mant-tipo').value;
+    const fecha = new Date().toLocaleDateString();
+
+    if (!desc) return;
+
+    const nuevoMant = { fecha, desc, tipo };
+    registrosMantenimiento.unshift(nuevoMant);
+    
+    localStorage.setItem('logbook_mantenimiento', JSON.stringify(registrosMantenimiento));
+    actualizarInterfazMantenimiento();
+    document.getElementById('mant-desc').value = "";
+}
+
+function actualizarInterfazMantenimiento() {
+    const tabla = document.querySelector("#tabla-mantenimiento tbody");
+    if (!tabla) return;
+    
+    tabla.innerHTML = "";
+    registrosMantenimiento.forEach(m => {
+        tabla.innerHTML += `
+            <tr>
+                <td>${m.fecha}</td>
+                <td>${m.desc}</td>
+                <td><span class="badge">${m.tipo}</span></td>
+            </tr>`;
+    });
+}
+
+// Extender la función de inicialización
+const originalActualizar = actualizarInterfaz;
+actualizarInterfaz = function() {
+    originalActualizar();
+    actualizarInterfazMantenimiento();
+};
