@@ -1,3 +1,4 @@
+/* VARIABLES DE INGENIERÍA Y DISEÑO */
 :root {
     --glass-bg: rgba(255, 255, 255, 0.07);
     --glass-border: rgba(255, 255, 255, 0.15);
@@ -5,8 +6,15 @@
     --accent-2: #4facfe;
     --text: #ffffff;
     --text-dim: #b0b0b0;
+    --bg-dark: #0f172a;
+    
+    /* Colores de Estado */
+    --status-activo: #00ff88;
+    --status-mantenimiento: #ffbb00;
+    --status-inactivo: #ff3333;
 }
 
+/* RESET Y ESTRUCTURA BASE */
 * {
     margin: 0;
     padding: 0;
@@ -15,7 +23,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #0f172a;
+    background: var(--bg-dark);
     background-image: 
         radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
         radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
@@ -28,10 +36,10 @@ body {
     overflow: hidden;
 }
 
-/* Contenedor Principal SPA */
+/* CONTENEDOR PRINCIPAL (Glassmorphism Shell)[cite: 1] */
 .glass-shell {
-    width: 90vw;
-    height: 85vh;
+    width: 95vw;
+    height: 90vh;
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
@@ -41,10 +49,10 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Sidebar Estilizada */
+/* BARRA LATERAL[cite: 1] */
 .sidebar {
-    width: 260px;
-    background: rgba(0, 0, 0, 0.2);
+    width: 280px;
+    background: rgba(0, 0, 0, 0.3);
     padding: 2rem;
     border-right: 1px solid var(--glass-border);
     display: flex;
@@ -54,19 +62,17 @@ body {
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
-
 .logo span { color: var(--accent); }
 
 .nav-btn {
     background: transparent;
     border: none;
     color: var(--text-dim);
-    padding: 1rem;
+    padding: 0.8rem 1rem;
     text-align: left;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: 0.3s;
     border-radius: 12px;
@@ -79,34 +85,84 @@ body {
     padding-left: 1.5rem;
 }
 
-/* Contenido Dinámico */
+.context-indicator {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+.context-indicator small { color: var(--text-dim); font-size: 0.7rem; }
+.context-indicator p { font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+
+/* CONTENIDO DINÁMICO[cite: 1] */
 .content {
     flex: 1;
-    padding: 3rem;
+    padding: 2.5rem;
     overflow-y: auto;
 }
 
 .tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn 0.5s ease; }
+.tab-content.active { display: block; animation: fadeIn 0.4s ease forwards; }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estilos de Tabla y Formas */
-.glass-form {
+/* GRID DE VEHÍCULOS (Tarjetas Compactas)[cite: 1] */
+.vehicle-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 1rem;
-    margin: 2rem 0;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
 }
 
-input {
+.vehicle-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    padding: 1.2rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+}
+
+.vehicle-card:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-3px); }
+.vehicle-card.selected { border-color: var(--accent); background: rgba(0, 242, 254, 0.05); }
+
+.patente-tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+
+/* SEMÁFORO DE ESTADO[cite: 1] */
+.status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+.status-activo { background: var(--status-activo); box-shadow: 0 0 8px var(--status-activo); }
+.status-mantenimiento { background: var(--status-mantenimiento); box-shadow: 0 0 8px var(--status-mantenimiento); }
+.status-inactivo { background: var(--status-inactivo); box-shadow: 0 0 8px var(--status-inactivo); }
+
+/* TABLAS Y FORMULARIOS[cite: 1] */
+.glass-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+input, select {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 0.8rem;
+    border-radius: 10px;
     color: white;
     outline: none;
 }
@@ -114,48 +170,45 @@ input {
 .action-btn {
     background: linear-gradient(45deg, var(--accent), var(--accent-2));
     border: none;
-    padding: 0 2rem;
-    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
     color: #0f172a;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: 0.2s;
 }
 
-.action-btn:hover { transform: scale(1.05); }
+.action-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 2rem;
-}
-
-th { text-align: left; color: var(--text-dim); padding: 1rem; border-bottom: 1px solid var(--glass-border); }
-td { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th { text-align: left; color: var(--text-dim); padding: 1rem; border-bottom: 1px solid var(--glass-border); font-size: 0.85rem; }
+td { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); font-size: 0.9rem; }
 
 .badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    background: rgba(0, 242, 254, 0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    background: rgba(0, 242, 254, 0.15);
     color: var(--accent);
 }
-/* Estados del Vehículo */
-.status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 8px;
-    box-shadow: 0 0 10px currentColor;
+
+/* KPI CARDS[cite: 1] */
+.kpi-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+.kpi-card { background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--glass-border); }
+.kpi-card span { font-size: 0.8rem; color: var(--text-dim); }
+.kpi-card h3 { font-size: 1.8rem; margin-top: 0.5rem; color: var(--accent); }
+
+/* MODAL[cite: 1] */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center; justify-content: center;
 }
 
-.status-activo { color: #00ff88; background-color: #00ff88; }       /* Verde */
-.status-mantenimiento { color: #ffbb00; background-color: #ffbb00; } /* Amarillo */
-.status-inactivo { color: #ff3333; background-color: #ff3333; }    /* Rojo */
-
-/* Tarjeta Seleccionada */
-.vehicle-card.selected {
-    border: 2px solid var(--accent);
-    background: rgba(0, 242, 254, 0.1);
-}
+.modal-content { width: 500px; padding: 2.5rem; }
+.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 1rem; }
