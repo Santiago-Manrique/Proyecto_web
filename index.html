@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logbook Vehicular | Ingeniería y Gestión</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts para un perfil profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-blobs"></div>
+    
+    <div class="glass-shell">
+        <aside class="sidebar">
+            <h2 class="logo">LOGBOOK<span>v1</span></h2>
+            <nav>
+                <button onclick="showTab('dashboard')" class="nav-btn active">Dashboard</button>
+                <button onclick="showTab('consumo')" class="nav-btn">Consumo</button>
+                <button onclick="showTab('mantenimiento')" class="nav-btn">Mantenimiento</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <!-- TAB: DASHBOARD -->
+            <section id="dashboard" class="tab-content active">
+                <header>
+                    <h1>Panel de Control</h1>
+                    <p>Indicadores clave de rendimiento (KPIs)</p>
+                </header>
+                <div class="kpi-container">
+                    <div class="kpi-card">
+                        <span>Vehículos</span>
+                        <h3 id="kpi-vehiculos">0</h3>
+                    </div>
+                    <div class="kpi-card">
+                        <span>Última Eficiencia</span>
+                        <h3 id="kpi-eficiencia">-- km/l</h3>
+                    </div>
+                    <div class="kpi-card">
+                        <span>Estado Técnico</span>
+                        <h3 id="kpi-estado">Óptimo</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: CONSUMO -->
+            <section id="consumo" class="tab-content">
+                <h2>Registro de Eficiencia Energética</h2>
+                <div class="glass-form">
+                    <input type="number" id="km-actual" placeholder="Kilometraje Actual">
+                    <input type="number" id="litros-carga" placeholder="Litros Cargados">
+                    <button class="action-btn" onclick="registrarConsumo()">Calcular y Guardar</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="tabla-consumo">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>KM</th>
+                                <th>Litros</th>
+                                <th>Eficiencia (km/l)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
