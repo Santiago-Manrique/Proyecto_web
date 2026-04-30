@@ -1,1 +1,142 @@
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --accent: #00f2fe;
+    --accent-2: #4facfe;
+    --text: #ffffff;
+    --text-dim: #b0b0b0;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;
+    background-image: 
+        radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text);
+    overflow: hidden;
+}
+
+/* Contenedor Principal SPA */
+.glass-shell {
+    width: 90vw;
+    height: 85vh;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Sidebar Estilizada */
+.sidebar {
+    width: 260px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 3rem;
+}
+
+.logo span { color: var(--accent); }
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 1rem;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+}
+
+.nav-btn.active, .nav-btn:hover {
+    background: var(--glass-bg);
+    color: var(--text);
+    padding-left: 1.5rem;
+}
+
+/* Contenido Dinámico */
+.content {
+    flex: 1;
+    padding: 3rem;
+    overflow-y: auto;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.5s ease; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilos de Tabla y Formas */
+.glass-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    border-radius: 12px;
+    color: white;
+    outline: none;
+}
+
+.action-btn {
+    background: linear-gradient(45deg, var(--accent), var(--accent-2));
+    border: none;
+    padding: 0 2rem;
+    border-radius: 12px;
+    color: #0f172a;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.action-btn:hover { transform: scale(1.05); }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+th { text-align: left; color: var(--text-dim); padding: 1rem; border-bottom: 1px solid var(--glass-border); }
+td { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    background: rgba(0, 242, 254, 0.2);
+    color: var(--accent);
+}
