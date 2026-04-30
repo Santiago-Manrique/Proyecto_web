@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logbook Movimientos | Gestión de Flota</title>
+    <!-- Perfil de ingeniería con tipografía Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -18,6 +19,7 @@
                 <button onclick="showTab('vehiculos')" class="nav-btn">Mi Flota</button>
                 <button onclick="showTab('mantenimiento')" class="nav-btn">Mantenimiento</button>
             </nav>
+            <!-- Selector de Contexto Visual -->
             <div class="context-indicator">
                 <small>Operando sobre:</small>
                 <p id="current-vehicle-name">Ninguno seleccionado</p>
@@ -25,11 +27,11 @@
         </aside>
 
         <main class="content">
-            <!-- SECCIÓN: CONTROL DE MOVIMIENTOS -->
+            <!-- SECCIÓN: CONTROL DE MOVIMIENTOS[cite: 1] -->
             <section id="movimiento" class="tab-content active">
                 <header>
                     <h1>Control de Movimientos</h1>
-                    <p>Registro automatizado de tiempos de uso</p>
+                    <p>Registro automatizado de tiempos de uso y logística[cite: 1]</p>
                 </header>
                 
                 <div class="glass-form">
@@ -56,7 +58,7 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: MI FLOTA -->
+            <!-- SECCIÓN: MI FLOTA (Cards Compactas)[cite: 1] -->
             <section id="vehiculos" class="tab-content">
                 <div class="section-header">
                     <h2>Gestión de Unidades</h2>
@@ -65,7 +67,7 @@
                 <div id="grid-vehiculos" class="vehicle-grid"></div>
             </section>
 
-            <!-- SECCIÓN: MANTENIMIENTO -->
+            <!-- SECCIÓN: MANTENIMIENTO[cite: 1] -->
             <section id="mantenimiento" class="tab-content">
                 <h2>Historial Técnico</h2>
                 <div class="glass-form">
@@ -88,7 +90,7 @@
         </main>
     </div>
 
-    <!-- MODAL DE VEHÍCULO -->
+    <!-- MODAL DE REGISTRO DE VEHÍCULO[cite: 1] -->
     <div id="modal-vehiculo" class="modal">
         <div class="glass-card modal-content">
             <h3>Alta de Unidad</h3>
