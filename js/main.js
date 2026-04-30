@@ -123,3 +123,53 @@ function showTab(tabId) {
 
 // Inicialización al cargar la ventana
 window.onload = actualizarInterfaz;
+
+let flota = JSON.parse(localStorage.getItem('logbook_flota')) || [];
+let vehiculoSeleccionadoId = null;
+
+function guardarVehiculo() {
+    const vehiculo = {
+        id: Date.now(),
+        marca: document.getElementById('v-marca').value,
+        modelo: document.getElementById('v-modelo').value,
+        patente: document.getElementById('v-patente').value,
+        chasis: document.getElementById('v-chasis').value,
+        dueno: document.getElementById('v-dueno').value,
+        estado: document.getElementById('v-estado').value // Nuevo campo: activo, mantenimiento, inactivo
+    };
+
+    if(!vehiculo.patente || !vehiculo.modelo) return alert("Faltan datos críticos.");
+
+    flota.push(vehiculo);
+    localStorage.setItem('logbook_flota', JSON.stringify(flota));
+    cerrarModal();
+    renderizarFlota();
+}
+
+function renderizarFlota() {
+    const grid = document.getElementById('grid-vehiculos');
+    if(!grid) return;
+
+    grid.innerHTML = flota.map(v => `
+        <div class="vehicle-card ${vehiculoSeleccionadoId === v.id ? 'selected' : ''}" 
+             onclick="seleccionarVehiculo(${v.id})">
+            <span class="patente-tag">${v.patente}</span>
+            <h4>${v.modelo}</h4>
+            <p><span class="status-dot status-${v.estado}"></span>${v.estado.toUpperCase()}</p>
+            <p><strong>${v.marca}</strong> | ${v.dueno}</p>
+        </div>
+    `).join('');
+}
+
+// SELECTOR DE CONTEXTO
+function seleccionarVehiculo(id) {
+    vehiculoSeleccionadoId = id;
+    const vehiculo = flota.find(v => v.id === id);
+    
+    // Feedback visual al usuario
+    document.getElementById('kpi-estado').innerText = vehiculo.modelo;
+    renderizarFlota();
+    
+    // Aquí puedes filtrar las tablas de consumo/mantenimiento para mostrar solo las de este ID
+    actualizarInterfaz(); 
+}
